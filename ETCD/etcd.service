@@ -1,0 +1,23 @@
+# /usr/lib/systemd/system/etcd.service
+[Unit]
+Description=Etcd Service
+Documentation=https://coreos.com/etcd/docs/latest/
+After=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/etcd --config-file=/etc/etcd/etcd.config.yml
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+Alias=etcd3.service
+
+[root@k8s-master01 pki]# mkdir /etc/kubernetes/pki/etcd
+[root@k8s-master01 pki]# ln -s /etc/etcd/ssl/* /etc/kubernetes/pki/etcd/
+[root@k8s-master01 pki]# systemctl daemon-reload
+[root@k8s-master01 pki]# systemctl enable --now etcd
+Created symlink /etc/systemd/system/etcd3.service → /usr/lib/systemd/system/etcd.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/etcd.service → /usr/lib/systemd/system/etcd.service.
